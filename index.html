@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مطور Flutter - محفظة أعمال | Electronics Store Pro</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #02569B;
+            --primary-dark: #013A6B;
+            --secondary: #26C6DA;
+            --accent: #00BFA5;
+            --bg: #0a0e27;
+            --bg-light: #111640;
+            --card: #1a1f4e;
+            --card-hover: #1f2468;
+            --text: #e0e0e0;
+            --text-muted: #a0a0b0;
+            --gold: #FFB300;
+            --success: #00E676;
+            --warning: #FF9100;
+            --danger: #FF1744;
+            --flutter-blue: #0553B1;
+            --dart-blue: #0175C2;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+
+        /* ==================== Loading Screen ==================== */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s;
+        }
+
+        #loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader {
+            text-align: center;
+        }
+
+        .loader .flutter-icon {
+            font-size: 80px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+        }
+
+        /* ==================== Navigation ==================== */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 14, 39, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding: 0;
+        }
+
+        nav .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        nav .logo {
+            font-size: 22px;
+            font-weight: 900;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        nav .logo img {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+        }
+
+        nav .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        nav .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        nav .nav-links a:hover,
+        nav .nav-links a.active {
+            color: var(--secondary);
+        }
+
+        nav .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--secondary);
+            transition: width 0.3s;
+        }
+
+        nav .nav-links a:hover::after,
+        nav .nav-links a.active::after {
+            width: 100%;
+        }
+
+        /* ==================== Hero Section ==================== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 120px 20px 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 50%, rgba(2,86,155,0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 50%, rgba(38,198,218,0.1) 0%, transparent 50%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero .badge {
+            display: inline-block;
+            background: rgba(38,198,218,0.15);
+            color: var(--secondary);
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            border: 1px solid rgba(38,198,218,0.3);
+        }
+
+        .hero h1 {
+            font-size: 56px;
+            font-weight: 900;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #26C6DA, #0553B1, #0175C2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero .subtitle {
+            font-size: 24px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .hero .stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .hero .stat {
+            text-align: center;
+        }
+
+        .hero .stat .number {
+            font-size: 42px;
+            font-weight: 900;
+            color: var(--secondary);
+        }
+
+        .hero .stat .label {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .hero .tech-icons {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .hero .tech-icons span {
+            background: var(--card);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* ==================== Sections ==================== */
+        .section {
+            padding: 100px 20px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 36px;
+            font-weight: 900;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 60px;
+            font-size: 16px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* ==================== Project Cards ==================== */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        .project-card {
+            background: var(--card);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .project-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(38,198,218,0.3);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .project-card .card-header {
+            padding: 12px 20px;
+            background: rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .project-card .card-header .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot.red { background: #FF5F56; }
+        .dot.yellow { background: #FFBD2E; }
+        .dot.green { background: #27C93F; }
+
+        .project-card .card-body {
+            padding: 30px;
+        }
+
+        .project-card .card-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .project-card h3 {
+            font-size: 22px;
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        .project-card .description {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .project-card .features {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .project-card .features li {
+            font-size: 13px;
+            color: var(--text);
+            padding: 4px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .project-card .features li i {
+            color: var(--success);
+            font-size: 12px;
+        }
+
+        .project-card .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .project-card .tech-tags span {
+            background: rgba(255,255,255,0.05);
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .project-card .card-footer {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            border: none;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--secondary);
+            border: 2px solid var(--secondary);
+        }
+
+        .btn-outline:hover {
+            background: rgba(38,198,218,0.1);
+        }
+
+        /* ==================== Skills Section ==================== */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .skill-card {
+            background: var(--card);
+            padding: 30px;
+            border-radius: 16px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .skill-card:hover {
+            border-color: rgba(38,198,218,0.3);
+        }
+
+        .skill-card .skill-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .skill-card h4 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .skill-bar {
+            background: rgba(255,255,255,0.1);
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .skill-bar .fill {
+            height: 100%;
+            border-radius: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 1s ease;
+        }
+
+        /* ==================== Problem-Solution ==================== */
+        .problem-solution {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .problem-solution h4 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .problem-solution .problem {
+            color: var(--danger);
+        }
+
+        .problem-solution .solution {
+            color: var(--success);
+        }
+
+        .problem-solution p {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* ==================== Contact ==================== */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .contact-card {
+            background: var(--card);
+            padding: 25px;
+            border-radius: 16px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.05);
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.3s ease;
+        }
+
+        .contact-card:hover {
+            border-color: rgba(38,198,218,0.3);
+            transform: translateY(-4px);
+        }
+
+        .contact-card i {
+            font-size: 32px;
+            margin-bottom: 10px;
+            color: var(--secondary);
+        }
+
+        .contact-card h5 {
+            margin-bottom: 5px;
+        }
+
+        .contact-card p {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* ==================== Footer ==================== */
+        footer {
+            text-align: center;
+            padding: 30px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        /* ==================== Responsive ==================== */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 32px; }
+            .hero .subtitle { font-size: 18px; }
+            .hero .stats { gap: 20px; }
+            .hero .stat .number { font-size: 28px; }
+            .section-title { font-size: 26px; }
+            .projects-grid { grid-template-columns: 1fr; }
+            nav .nav-links { display: none; }
+        }
+
+        /* ==================== Animations ==================== */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ==================== Modal ==================== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 700px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 24px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Loading Screen -->
+<div id="loading-screen">
+    <div class="loader">
+        <div class="flutter-icon">
+            <img src="https://storage.googleapis.com/cms-storage-bucket/4fd0db61df0567c0f352.png" width="80" alt="Flutter">
+        </div>
+        <p style="color: var(--text-muted); margin-top: 20px;">جاري تحميل المحفظة...</p>
+    </div>
+</div>
+
+<!-- Navigation -->
+<nav>
+    <div class="container">
+        <a href="#" class="logo">
+            <i class="fa-brands fa-flutter" style="color: var(--secondary); font-size: 28px;"></i>
+            <span>Flutter Dev</span>
+        </a>
+        <div class="nav-links">
+            <a href="#hero" class="active">الرئيسية</a>
+            <a href="#projects">المشاريع</a>
+            <a href="#skills">المهارات</a>
+            <a href="#achievements">الإنجازات</a>
+            <a href="#contact">التواصل</a>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero" id="hero">
+    <div class="hero-content fade-in">
+        <div class="badge">
+            <i class="fa-solid fa-circle-check"></i> متاح للعمل
+        </div>
+        <h1>مطور Flutter متخصص</h1>
+        <p class="subtitle">بناء تطبيقات Windows Desktop احترافية لأنظمة ERP و POS</p>
+        
+        <div class="stats">
+            <div class="stat">
+                <div class="number" data-count="3">0</div>
+                <div class="label">تطبيقات متكاملة</div>
+            </div>
+            <div class="stat">
+                <div class="number" data-count="65">0</div>
+                <div class="label">شاشة مصممة</div>
+            </div>
+            <div class="stat">
+                <div class="number" data-count="530">0</div>
+                <div class="label">ساعة تطوير</div>
+            </div>
+            <div class="stat">
+                <div class="number" data-count="100">0</div>
+                <div class="label">% رضا العملاء</div>
+            </div>
+        </div>
+
+        <div class="tech-icons">
+            <span><i class="fa-brands fa-flutter"></i> Flutter 3.x</span>
+            <span><i class="fa-solid fa-code"></i> Dart</span>
+            <span><i class="fa-solid fa-database"></i> JSON/SQLite</span>
+            <span><i class="fa-solid fa-shield-halved"></i> AES Encryption</span>
+            <span><i class="fa-solid fa-chart-line"></i> FL Chart</span>
+            <span><i class="fa-brands fa-windows"></i> Windows Desktop</span>
+        </div>
+    </div>
+</section>
+
+<!-- Projects Section -->
+<section class="section" id="projects">
+    <div class="container">
+        <h2 class="section-title">🎯 المشاريع المنجزة</h2>
+        <p class="section-subtitle">ثلاثة أنظمة متكاملة تخدم قطاعات مختلفة</p>
+        
+        <div class="projects-grid">
+            
+            <!-- Project 1: Electronics Store -->
+            <div class="project-card fade-in">
+                <div class="card-header">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                    <span style="margin-right: auto;">electronics_store_pro</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-icon">🏪</div>
+                    <h3>نظام متجر الإلكترونيات</h3>
+                    <p class="description">نظام ERP متكامل لإدارة محلات الإلكترونيات والأجهزة الكهربائية مع نظام ترخيص متقدم</p>
+                    
+                    <ul class="features">
+                        <li><i class="fa-solid fa-check"></i> 25+ شاشة تفاعلية</li>
+                        <li><i class="fa-solid fa-check"></i> إدارة المنتجات والمخزون</li>
+                        <li><i class="fa-solid fa-check"></i> نظام مبيعات وفواتير</li>
+                        <li><i class="fa-solid fa-check"></i> تقارير أرباح متكاملة</li>
+                        <li><i class="fa-solid fa-check"></i> نظام ترخيص AES-256</li>
+                        <li><i class="fa-solid fa-check"></i> دعم عربي RTL كامل</li>
+                    </ul>
+                    
+                    <div class="tech-tags">
+                        <span>Flutter</span><span>Dart</span><span>Provider</span>
+                        <span>JSON Storage</span><span>AES</span><span>FL Chart</span>
+                    </div>
+                    
+                    <div class="card-footer">
+                        <button class="btn btn-primary" onclick="openModal('modal1')">
+                            <i class="fa-solid fa-circle-info"></i> تفاصيل المشروع
+                        </button>
+                        <a href="https://github.com/habeebalaa45" class="btn btn-outline" target="_blank">
+                            <i class="fa-brands fa-github"></i> الكود المصدري
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project 2: Hospitality -->
+            <div class="project-card fade-in">
+                <div class="card-header">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                    <span style="margin-right: auto;">hospitality_system</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-icon">🍽️</div>
+                    <h3>نظام ضيافة الكرم</h3>
+                    <p class="description">نظام إدارة المطاعم والضيافة مع تتبع الطلبات والحجوزات وتقارير مالية دقيقة</p>
+                    
+                    <ul class="features">
+                        <li><i class="fa-solid fa-check"></i> 20+ شاشة تفاعلية</li>
+                        <li><i class="fa-solid fa-check"></i> إدارة الطاولات والحجوزات</li>
+                        <li><i class="fa-solid fa-check"></i> نظام طلبات إلكتروني</li>
+                        <li><i class="fa-solid fa-check"></i> تشفير متقدم للتراخيص</li>
+                        <li><i class="fa-solid fa-check"></i> ربط بمعرف الجهاز</li>
+                        <li><i class="fa-solid fa-check"></i> تقارير يومية/شهرية</li>
+                    </ul>
+                    
+                    <div class="tech-tags">
+                        <span>Flutter</span><span>Dart</span><span>Encrypt</span>
+                        <span>SHA-256</span><span>Device Info</span>
+                    </div>
+                    
+                    <div class="card-footer">
+                        <button class="btn btn-primary" onclick="openModal('modal2')">
+                            <i class="fa-solid fa-circle-info"></i> تفاصيل المشروع
+                        </button>
+                        <a href="https://github.com/habeebalaa45" class="btn btn-outline" target="_blank">
+                            <i class="fa-brands fa-github"></i> الكود المصدري
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project 3: POS System -->
+            <div class="project-card fade-in">
+                <div class="card-header">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                    <span style="margin-right: auto;">pos_system</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-icon">💳</div>
+                    <h3>نظام نقاط البيع POS</h3>
+                    <p class="description">نظام نقاط بيع سريع ومتكامل مع دعم الباركود والطباعة الحرارية والتقسيط</p>
+                    
+                    <ul class="features">
+                        <li><i class="fa-solid fa-check"></i> 15+ شاشة تفاعلية</li>
+                        <li><i class="fa-solid fa-check"></i> واجهة بيع سريعة</li>
+                        <li><i class="fa-solid fa-check"></i> دعم الباركود</li>
+                        <li><i class="fa-solid fa-check"></i> نظام تقسيط متكامل</li>
+                        <li><i class="fa-solid fa-check"></i> ربط مباشر بالمخزون</li>
+                        <li><i class="fa-solid fa-check"></i> حذف وتعديل المبيعات</li>
+                    </ul>
+                    
+                    <div class="tech-tags">
+                        <span>Flutter</span><span>Dart</span><span>Barcode</span>
+                        <span>JSON</span><span>Provider</span>
+                    </div>
+                    
+                    <div class="card-footer">
+                        <button class="btn btn-primary" onclick="openModal('modal3')">
+                            <i class="fa-solid fa-circle-info"></i> تفاصيل المشروع
+                        </button>
+                        <a href="https://github.com/habeebalaa45" class="btn btn-outline" target="_blank">
+                            <i class="fa-brands fa-github"></i> الكود المصدري
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- Problem-Solution Section -->
+<section class="section" id="achievements" style="background: rgba(0,0,0,0.1);">
+    <div class="container">
+        <h2 class="section-title">💡 لماذا هذه التطبيقات مهمة؟</h2>
+        <p class="section-subtitle">كل تطبيق يحل مشكلة حقيقية في السوق السوري</p>
+        
+        <div class="problem-solution fade-in">
+            <h4 class="problem"><i class="fa-solid fa-triangle-exclamation"></i> المشكلة في السوق المحلي</h4>
+            <p>معظم المحلات التجارية الصغيرة والمتوسطة في سوريا تعاني من:</p>
+            <ul style="color: var(--text-muted); margin: 15px 20px; font-size: 14px;">
+                <li>عدم وجود نظام محاسبي دقيق يتناسب مع احتياجاتهم</li>
+                <li>صعوبة تتبع المخزون والأرباح اليومية</li>
+                <li>الاعتماد على الورقة والقلم مما يؤدي لضياع البيانات</li>
+                <li>عدم القدرة على تحمل تكاليف الأنظمة العالمية مثل SAP/Odoo</li>
+                <li>الحاجة لنظام يعمل Offline بسبب ضعف الإنترنت</li>
+            </ul>
+        </div>
+        
+        <div class="problem-solution fade-in">
+            <h4 class="solution"><i class="fa-solid fa-lightbulb"></i> الحل المقدم</h4>
+            <ul style="color: var(--text-muted); margin: 15px 20px; font-size: 14px;">
+                <li><strong>نظام مخصص</strong> يلبي احتياجات السوق المحلي بالضبط</li>
+                <li><strong>واجهة عربية</strong> سهلة الاستخدام تناسب جميع المستخدمين</li>
+                <li><strong>تطبيق Desktop</strong> يعمل بشكل كامل بدون إنترنت</li>
+                <li><strong>نظام ترخيص</strong> يحمي حقوق المطور ويمنع النسخ غير القانوني</li>
+                <li><strong>تقارير مالية</strong> دقيقة تساعد في اتخاذ القرارات</li>
+                <li><strong>تكلفة معقولة</strong> مقارنة بالأنظمة العالمية</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- Skills Section -->
+<section class="section" id="skills">
+    <div class="container">
+        <h2 class="section-title">🛠️ المهارات التقنية</h2>
+        <p class="section-subtitle">خبرات ومهارات تم تطويرها عبر 3+ سنوات من العمل</p>
+        
+        <div class="skills-grid">
+            <div class="skill-card fade-in">
+                <div class="skill-icon">📱</div>
+                <h4>Flutter & Dart</h4>
+                <div class="skill-bar"><div class="fill" data-width="95" style="width: 0;"></div></div>
+                <p style="color: var(--text-muted); margin-top: 10px; font-size: 13px;">25+ شاشة، 8 Services، 6 Models</p>
+            </div>
+            
+            <div class="skill-card fade-in">
+                <div class="skill-icon">🗄️</div>
+                <h4>Local Databases</h4>
+                <div class="skill-bar"><div class="fill" data-width="90" style="width: 0;"></div></div>
+                <p style="color: var(--text-muted); margin-top: 10px; font-size: 13px;">JSON, SQLite, Hive, SharedPrefs</p>
+            </div>
+            
+            <div class="skill-card fade-in">
+                <div class="skill-icon">🔐</div>
+                <h4>Security & Encryption</h4>
+                <div class="skill-bar"><div class="fill" data-width="85" style="width: 0;"></div></div>
+                <p style="color: var(--text-muted); margin-top: 10px; font-size: 13px;">AES-256, SHA-256, HMAC</p>
+            </div>
+            
+            <div class="skill-card fade-in">
+                <div class="skill-icon">🎨</div>
+                <h4>UI/UX Design</h4>
+                <div class="skill-bar"><div class="fill" data-width="85" style="width: 0;"></div></div>
+                <p style="color: var(--text-muted); margin-top: 10px; font-size: 13px;">Material Design 3, RTL, Responsive</p>
+            </div>
+            
+            <div class="skill-card fade-in">
+                <div class="skill-icon">📊</div>
+                <h4>Charts & Reports</h4>
+                <div class="skill-bar"><div class="fill" data-width="80" style="width: 0;"></div></div>
+                <p style="color: var(--text-muted); margin-top: 10px; font-size: 13px;">FL Chart, Custom Reports</p>
+            </div>
+            
+            <div class="skill-card fade-in">
+                <div class="skill-icon">🔧</div>
+                <h4>Git & DevOps</h4>
+                <div class="skill-bar"><div class="fill" data-width="80" style="width: 0;"></div></div>
+                <p style="color: var(--text-muted); margin-top: 10px; font-size: 13px;">GitHub, CI/CD, Testing</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section class="section" id="contact" style="background: rgba(0,0,0,0.1);">
+    <div class="container">
+        <h2 class="section-title">📞 تواصل معي</h2>
+        <p class="section-subtitle">متاح للعمل والمشاريع الجديدة</p>
+        
+        <div class="contact-grid">
+            <a href="mailto:your.email@gmail.com" class="contact-card">
+                <i class="fa-solid fa-envelope"></i>
+                <h5>البريد الإلكتروني</h5>
+                <p>your.email@gmail.com</p>
+            </a>
+            
+            <a href="https://wa.me/963999999999" class="contact-card" target="_blank">
+                <i class="fa-brands fa-whatsapp"></i>
+                <h5>واتساب</h5>
+                <p>0999-999-999</p>
+            </a>
+            
+            <a href="https://github.com/habeebalaa45" class="contact-card" target="_blank">
+                <i class="fa-brands fa-github"></i>
+                <h5>GitHub</h5>
+                <p>github.com/habeebalaa45</p>
+            </a>
+            
+            <a href="https://linkedin.com/in/yourprofile" class="contact-card" target="_blank">
+                <i class="fa-brands fa-linkedin"></i>
+                <h5>LinkedIn</h5>
+                <p>linkedin.com/in/yourprofile</p>
+            </a>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="#" class="btn btn-primary" style="font-size: 16px; padding: 14px 40px;">
+                <i class="fa-solid fa-download"></i> تحميل السيرة الذاتية PDF
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer>
+    <p>© 2025 جميع الحقوق محفوظة | صُمم بواسطة Flutter & Dart</p>
+    <p style="margin-top: 5px;">
+        <i class="fa-solid fa-code"></i> بـ <i class="fa-solid fa-heart" style="color: var(--danger);"></i> باستخدام 
+        <i class="fa-brands fa-flutter" style="color: var(--secondary);"></i> Flutter
+    </p>
+</footer>
+
+<!-- Modals -->
+<div class="modal" id="modal1">
+    <div class="modal-content">
+        <button class="modal-close" onclick="closeModal('modal1')">&times;</button>
+        <h3 style="color: white; margin-bottom: 20px;">🏪 تفاصيل نظام متجر الإلكترونيات</h3>
+        <div style="color: var(--text-muted);">
+            <h4 style="color: var(--secondary); margin: 15px 0 10px;">📊 إحصائيات المشروع</h4>
+            <ul style="list-style: none; margin-bottom: 20px;">
+                <li>✅ 25+ شاشة تفاعلية</li>
+                <li>✅ 8 خدمات (Services)</li>
+                <li>✅ 6 نماذج بيانات (Models)</li>
+                <li>✅ 200+ ساعة عمل</li>
+                <li>✅ نظام ترخيص AES-256</li>
+            </ul>
+            
+            <h4 style="color: var(--secondary); margin: 15px 0 10px;">🎯 المميزات</h4>
+            <ul style="list-style: none;">
+                <li>📦 إدارة المنتجات والمخزون</li>
+                <li>💰 نظام مبيعات مع فواتير</li>
+                <li>👥 إدارة العملاء</li>
+                <li>🔧 نظام الصيانة</li>
+                <li>📊 تقارير الأرباح</li>
+                <li>💼 إدارة المصروفات</li>
+                <li>🔐 نظام ترخيص متقدم</li>
+                <li>💾 نسخ احتياطي</li>
+            </ul>
+            
+            <h4 style="color: var(--secondary); margin: 15px 0 10px;">🛠️ التقنيات</h4>
+            <p>Flutter 3.x • Dart • Provider • JSON Storage • AES Encryption • Crypto • Path Provider • FL Chart • File Picker • Share Plus</p>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="modal2">
+    <div class="modal-content">
+        <button class="modal-close" onclick="closeModal('modal2')">&times;</button>
+        <h3 style="color: white; margin-bottom: 20px;">🍽️ تفاصيل نظام ضيافة الكرم</h3>
+        <div style="color: var(--text-muted);">
+            <h4 style="color: var(--secondary); margin: 15px 0 10px;">📊 إحصائيات المشروع</h4>
+            <ul style="list-style: none; margin-bottom: 20px;">
+                <li>✅ 20+ شاشة تفاعلية</li>
+                <li>✅ 7 خدمات (Services)</li>
+                <li>✅ 5 نماذج بيانات (Models)</li>
+                <li>✅ 180+ ساعة عمل</li>
+                <li>✅ نظام ترخيص متقدم</li>
+            </ul>
+            
+            <h4 style="color: var(--secondary); margin: 15px 0 10px;">🎯 المميزات</h4>
+            <ul style="list-style: none;">
+                <li>🍽️ إدارة الطاولات والحجوزات</li>
+                <li>📋 نظام الطلبات الإلكتروني</li>
+                <li>📊 تقارير مبيعات يومية</li>
+                <li>🔐 نظام ترخيص بمعرف الجهاز</li>
+                <li>🖨️ دعم الطباعة الحرارية</li>
+                <li>📦 إدارة المخزون الغذائي</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="modal3">
+    <div class="modal-content">
+        <button class="modal-close" onclick="closeModal('modal3')">&times;</button>
+        <h3 style="color: white; margin-bottom: 20px;">💳 تفاصيل نظام نقاط البيع POS</h3>
+        <div style="color: var(--text-muted);">
+            <h4 style="color: var(--secondary); margin: 15px 0 10px;">📊 إحصائيات المشروع</h4>
+            <ul style="list-style: none; margin-bottom: 20px;">
+                <li>✅ 15+ شاشة تفاعلية</li>
+                <li>✅ 6 خدمات (Services)</li>
+                <li>✅ 4 نماذج بيانات (Models)</li>
+                <li>✅ 150+ ساعة عمل</li>
+            </ul>
+            
+            <h4 style="color: var(--secondary); margin: 15px 0 10px;">🎯 المميزات</h4>
+            <ul style="list-style: none;">
+                <li>💳 واجهة بيع سريعة</li>
+                <li>📱 دعم الباركود</li>
+                <li>📦 ربط مباشر مع المخزون</li>
+                <li>📊 تقارير فورية</li>
+                <li>💰 دفع نقدي وتقسيط</li>
+                <li>🔄 إدارة المرتجعات</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Loading Screen
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            document.getElementById('loading-screen').classList.add('hidden');
+        }, 1500);
+    });
+
+    // Fade In Animation
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                
+                // Animate skill bars
+                const bars = entry.target.querySelectorAll('.fill');
+                bars.forEach(bar => {
+                    const width = bar.getAttribute('data-width');
+                    setTimeout(() => { bar.style.width = width + '%'; }, 200);
+                });
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // Counter Animation
+    const counterObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const counters = entry.target.querySelectorAll('.number[data-count]');
+                counters.forEach(counter => {
+                    const target = parseInt(counter.getAttribute('data-count'));
+                    animateCounter(counter, target);
+                });
+            }
+        });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('.hero').forEach(el => counterObserver.observe(el));
+
+    function animateCounter(element, target) {
+        let current = 0;
+        const increment = target / 50;
+        const timer = setInterval(() => {
+            current += increment;
+            if (current >= target) {
+                element.textContent = target + (target === 100 ? '%' : '+');
+                clearInterval(timer);
+            } else {
+                element.textContent = Math.floor(current) + '+';
+            }
+        }, 30);
+    }
+
+    // Modal Functions
+    function openModal(id) {
+        document.getElementById(id).classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(id) {
+        document.getElementById(id).classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+
+    // Close modal on outside click
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        });
+    });
+
+    // Smooth Scroll
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
